@@ -1,0 +1,50 @@
+{
+  "name": "ainexus-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.77.0",
+    "@google/generative-ai": "^0.24.1",
+    "@react-email/components": "^1.0.8",
+    "@react-email/render": "^1.0.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.97.0",
+    "@types/three": "^0.183.0",
+    "cheerio": "^1.2.0",
+    "dotenv": "^17.3.1",
+    "fast-xml-parser": "^5.3.6",
+    "he": "^1.2.0",
+    "lucide-react": "^0.575.0",
+    "next": "16.1.6",
+    "openai": "^6.22.0",
+    "pg": "^8.18.0",
+    "puppeteer": "^24.37.4",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
+    "resend": "^4.8.0",
+    "rss-parser": "^3.13.0",
+    "three": "^0.183.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/he": "^1.2.3",
+    "@types/node": "^20",
+    "@types/puppeteer": "^5.4.7",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^10.0.0",
+    "eslint-config-next": "^0.2.4",
+    "tailwindcss": "^4",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,13 @@
+node_modules
+.npm-cache
+.puppeteer_cache
+.puppeteer_data
+.puppeteer_home
+.puppeteer_temp
+.puppeteer_temp_*
+.env
+.env.local
+.next
+.clerk
+.agent
+out.html
