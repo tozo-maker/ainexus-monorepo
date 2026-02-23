@@ -103,7 +103,7 @@ import CodeIDE from "./layouts/CodeIDE";
 // @ts-ignore
 import ToolGlobe from "./spatial/ToolGlobe";
 
-export default function AINexus({ initialTools, initialModels, news, videos, initialIntent = "GENERAL", user }: { initialTools: any[], initialModels: any[], news: any[], videos: any[], initialIntent?: string, user?: any }) {
+export default function AINexus({ initialTools, initialModels, news, videos, initialIntent = "GENERAL", user, initialHeroStats = { tools: 0, categories: 0, gdpr: 0 } }: { initialTools: any[], initialModels: any[], news: any[], videos: any[], initialIntent?: string, user?: any, initialHeroStats?: { tools: number, categories: number, gdpr: number } }) {
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -113,6 +113,8 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
     const [activeNav, setActiveNav] = useState("discover");
     const [activeCategory, setActiveCategory] = useState("All");
     const [priceFilter, setPriceFilter] = useState("All");
+    const [euRisk, setEuRisk] = useState("All");
+    const [gdpr, setGdpr] = useState(false);
     const [sortBy, setSortBy] = useState("rating");
     const [hoveredTool, setHoveredTool] = useState<string | null>(null);
     const [compareList, setCompareList] = useState<any[]>([]);
@@ -164,6 +166,8 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                 searchQuery,
                 category: activeCategory,
                 price: priceFilter,
+                euRisk,
+                gdpr,
                 page: nextPage,
                 limit: 12
             });
@@ -206,7 +210,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
             fetchTools(true);
         }, 100); // Small buffer to ensure state is settled
         return () => clearTimeout(timer);
-    }, [activeCategory, priceFilter, searchQuery]);
+    }, [activeCategory, priceFilter, euRisk, gdpr, searchQuery]);
 
     const toggleCompare = (tool: any) => {
         if (compareList.find(t => t.id === tool.id)) {
@@ -420,7 +424,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                         </span>
                         <input
                             style={styles.searchInput}
-                            placeholder="Search 4,200+ tools, 80+ models, and 500+ video guides..."
+                            placeholder={`Search ${initialHeroStats.tools.toLocaleString()}+ tools, verified models, and compliance reports...`}
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
                         />
@@ -428,15 +432,15 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                     <div style={styles.searchMeta}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <LayoutGrid size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>4,200+</span> Tools</span>
+                            <span><span style={styles.statNum}>{initialHeroStats.tools.toLocaleString()}</span> Tools</span>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <Cpu size={14} style={{ color: "var(--accent)" }} />
                             <span><span style={styles.statNum}>80+</span> Models</span>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <Newspaper size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>Daily</span> News</span>
+                            <ShieldCheck size={14} style={{ color: "var(--accent)" }} />
+                            <span><span style={styles.statNum}>{initialHeroStats.gdpr.toLocaleString()}</span> GDPR Graded</span>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <Video size={14} style={{ color: "var(--accent)" }} />
@@ -452,10 +456,10 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                     {/* Stats row */}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 48 }}>
                         {[
-                            { val: "4,287", label: "Tools Catalogued", sub: "+23 this week", icon: <LayoutGrid size={24} /> },
-                            { val: "82", label: "Intelligence Units", sub: "Tracked & benchmarked", icon: <Cpu size={24} /> },
-                            { val: "1.2M", label: "Monthly Intelligence", sub: "Growing community", icon: <Globe size={24} /> },
-                            { val: "99%", label: "System Uptime", sub: "Real-time data sync", icon: <ShieldCheck size={24} /> },
+                            { val: initialHeroStats.tools.toLocaleString(), label: "Tools Catalogued", sub: "Enterprise & startup catalog", icon: <LayoutGrid size={24} /> },
+                            { val: initialHeroStats.categories.toLocaleString(), label: "Categories Covered", sub: "Organized intents", icon: <Cpu size={24} /> },
+                            { val: initialHeroStats.gdpr.toLocaleString(), label: "GDPR Graded", sub: "Compliance transparency", icon: <ShieldCheck size={24} /> },
+                            { val: "24/7", label: "Real-time Sync", sub: "Continuous data enrichment", icon: <Globe size={24} /> },
                         ].map((s, i) => (
                             <div key={i} style={styles.statCard}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
@@ -477,6 +481,18 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                             <div key={cat} style={styles.filterChip(activeCategory === cat)} onClick={() => setActiveCategory(cat)}>{cat}</div>
                         ))}
                         <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
+                            <label style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", color: "var(--foreground)" }}>
+                                <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)} style={{ accentColor: "var(--accent)" }} />
+                                GDPR ✓
+                            </label>
+
+                            <span style={{ width: 1, height: 16, background: "var(--border)", margin: "0 4px" }} />
+
+                            <span style={styles.filterLabel}>EU Risk</span>
+                            <select style={styles.select} value={euRisk} onChange={e => setEuRisk(e.target.value)}>
+                                {["All", "Minimal", "Limited", "High", "Unacceptable", "Unclassified"].map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+
                             <span style={styles.filterLabel}>Price</span>
                             <select style={styles.select} value={priceFilter} onChange={e => setPriceFilter(e.target.value)}>
                                 {["All", "Free", "Freemium", "Paid"].map(p => <option key={p}>{p}</option>)}

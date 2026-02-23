@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getTools, getModels, getNews, getVideos } from './actions';
+import { getTools, getModels, getNews, getVideos, getHeroStats } from './actions';
 import AINeXus from '@/components/AINexus';
 
 export const metadata: Metadata = {
@@ -20,11 +20,12 @@ export default async function Page({
     const resolvedParams = await searchParams;
     const query = (resolvedParams?.q as string) || "";
 
-    const [toolsResult, models, news, videos] = await Promise.all([
+    const [toolsResult, models, news, videos, heroStats] = await Promise.all([
         getTools({ searchQuery: query, limit: 12 }), // Fixed to pass object as per current actions.ts
         getModels(),
         getNews(),
-        getVideos()
+        getVideos(),
+        getHeroStats()
     ]);
 
     const tools = toolsResult.tools || [];
@@ -34,5 +35,5 @@ export default async function Page({
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    return <AINeXus initialTools={tools} initialModels={models} news={news} videos={videos} initialIntent={intent} user={user} />;
+    return <AINeXus initialTools={tools} initialModels={models} news={news} videos={videos} initialIntent={intent} user={user} initialHeroStats={heroStats} />;
 }

@@ -13,13 +13,17 @@ export async function getTools({
   page = 1,
   limit = 12,
   category,
-  price
+  price,
+  euRisk,
+  gdpr
 }: {
   searchQuery?: string,
   page?: number,
   limit?: number,
   category?: string,
-  price?: string
+  price?: string,
+  euRisk?: string,
+  gdpr?: boolean
 } = {}) {
   const offset = (page - 1) * limit;
 
@@ -42,6 +46,7 @@ export async function getTools({
       pricing_model, avg_rating, review_count, is_featured, 
       logo_url, has_api, is_open_source, weekly_growth, editor_badge, underlying_model,
       twitter_url, linkedin_url, github_url, discord_url, market_share, popularity_score, is_verified,
+      eu_ai_act_risk_tier, compliance_score, data_governance_grade, gdpr_compliant, trains_on_user_data, transparency_index,
       category:categories!inner(name), 
       company:companies(name)
     `, { count: 'exact' });
@@ -52,6 +57,14 @@ export async function getTools({
 
   if (price && price !== 'All') {
     query = query.eq('pricing_model', price.toLowerCase());
+  }
+
+  if (euRisk && euRisk !== 'All') {
+    query = query.eq('eu_ai_act_risk_tier', euRisk);
+  }
+
+  if (gdpr) {
+    query = query.eq('gdpr_compliant', true);
   }
 
   if (searchQuery && searchQuery.trim().length > 0) {
@@ -204,6 +217,7 @@ export async function getToolBySlug(slug: string) {
       id, name, slug, description, website_url, tags, 
       pricing_model, avg_rating, review_count, is_featured, 
       logo_url, has_api, is_open_source, weekly_growth, editor_badge, underlying_model,
+      eu_ai_act_risk_tier, compliance_score, data_governance_grade, gdpr_compliant, trains_on_user_data, transparency_index,
       category_id,
       category:categories(name), 
       company:companies(name)
@@ -349,4 +363,19 @@ function formatViews(n: number) {
   if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
   if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
   return n.toString();
+}
+
+export async function getHeroStats() {
+  const supabase = await createClient();
+  const [{ count: toolsCount }, { count: categoriesCount }, { count: gdprCount }] = await Promise.all([
+    supabase.from('tools').select('*', { count: 'exact', head: true }),
+    supabase.from('categories').select('*', { count: 'exact', head: true }),
+    supabase.from('tools').select('*', { count: 'exact', head: true }).eq('gdpr_compliant', true)
+  ]);
+
+  return {
+    tools: toolsCount || 0,
+    categories: categoriesCount || 0,
+    gdpr: gdprCount || 0
+  };
 }

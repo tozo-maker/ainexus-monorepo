@@ -34,7 +34,9 @@ import {
     PenTool,
     Search as SearchIcon,
     Megaphone,
-    BarChart
+    BarChart,
+    Database,
+    Eye
 } from 'lucide-react';
 
 const CategoryIcon = ({ category, size = 12 }: { category: string, size?: number }) => {
@@ -186,6 +188,39 @@ export const Badge = ({ text }: { text: string | null }) => {
     );
 };
 
+export const RiskBadge = ({ tier }: { tier: string | null }) => {
+    if (!tier || tier === 'Unclassified') return null;
+
+    let color = "";
+    let icon = <ShieldCheck size={10} />;
+
+    switch (tier.toLowerCase()) {
+        case 'minimal': color = "#10B981"; break;
+        case 'limited': color = "#F59E0B"; break;
+        case 'high': color = "#EF4444"; icon = <Zap size={10} />; break;
+        case 'unacceptable': color = "#991B1B"; icon = <XCircle size={10} />; break;
+        default: return null;
+    }
+
+    return (
+        <span style={{
+            color,
+            border: `1px solid ${color}40`,
+            background: `${color}10`,
+            borderRadius: 6,
+            padding: "4px 8px",
+            fontSize: "11px",
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5
+        }}>
+            {icon}
+            {tier} Risk
+        </span>
+    );
+};
+
 // ============================================================
 // STYLES
 // ============================================================
@@ -322,6 +357,17 @@ export default function ToolCard({ tool, inCompare, isSaved, onToggleSave, onTog
                             </div>
                         )}
                         <Badge text={tool.badge} />
+                        <RiskBadge tier={tool.eu_ai_act_risk_tier} />
+                        {tool.gdpr_compliant && (
+                            <span style={{ fontSize: 11, fontWeight: 600, color: "#10B981", background: "rgba(16,185,129,0.1)", padding: "4px 8px", borderRadius: 6, display: "flex", alignItems: "center", gap: 4 }}>
+                                <CheckCircle2 size={10} /> GDPR
+                            </span>
+                        )}
+                        {tool.trains_on_user_data && (
+                            <span style={{ fontSize: 11, fontWeight: 600, color: "#F59E0B", background: "rgba(245,158,11,0.1)", padding: "4px 8px", borderRadius: 6, display: "flex", alignItems: "center", gap: 4 }}>
+                                <Database size={10} /> Trains Data
+                            </span>
+                        )}
                     </div>
                     <div style={styles.toolCompany}>
                         <CategoryIcon category={tool.category} />
@@ -337,6 +383,20 @@ export default function ToolCard({ tool, inCompare, isSaved, onToggleSave, onTog
             </div>
 
             <SocialLinks tool={tool} />
+
+            {tool.compliance_score > 0 && (
+                <div style={{ display: "flex", gap: 12, marginBottom: 16, fontSize: 10, fontWeight: 700, color: "var(--muted)", fontFamily: "var(--font-mono)", letterSpacing: "0.5px" }}>
+                    <div style={{ display: "flex", gap: 4, alignItems: "center" }} title="Compliance Score">
+                        <Activity size={12} strokeWidth={2.5} style={{ color: "var(--accent)" }} /> SCORE: <span style={{ color: "var(--foreground)" }}>{tool.compliance_score}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 4, alignItems: "center" }} title="Data Governance Grade">
+                        <ShieldCheck size={12} strokeWidth={2.5} style={{ color: "var(--accent)" }} /> GDVR: <span style={{ color: "var(--foreground)" }}>{tool.data_governance_grade}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: 4, alignItems: "center" }} title="Transparency Index">
+                        <Eye size={12} strokeWidth={2.5} style={{ color: "var(--accent)" }} /> TI: <span style={{ color: "var(--foreground)" }}>{tool.transparency_index}</span>
+                    </div>
+                </div>
+            )}
 
             <div style={styles.toolTags}>
                 {tool.tags && tool.tags.slice(0, 3).map((tag: string) => (

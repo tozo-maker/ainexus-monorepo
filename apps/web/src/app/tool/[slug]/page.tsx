@@ -6,12 +6,12 @@ import SharedNavbar from "@/components/SharedNavbar";
 import SimilarTools from "@/components/SimilarTools";
 import React, { Fragment } from "react";
 import Link from "next/link";
-import { Badge, StarRating, ToolLogo } from "@/components/ToolCard";
+import { Badge, StarRating, ToolLogo, RiskBadge } from "@/components/ToolCard";
 import ReactMarkdown from "react-markdown";
 import AgentSandbox from "@/components/AgentSandbox";
 import ReviewForm from "@/components/ReviewForm";
 import PricingHistory from "@/components/PricingHistory";
-import { ChevronLeft, ExternalLink, Building, CheckCircle, Tag, Globe, MessageSquare } from "lucide-react";
+import { ChevronLeft, ExternalLink, Building, CheckCircle, Tag, Globe, MessageSquare, Activity, ShieldCheck, TrendingUp } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -256,6 +256,80 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                         </div>
                     )}
                 </div>
+
+                {/* Compliance & Governance */}
+                {tool.eu_ai_act_risk_tier && (
+                    <div style={{ marginTop: 100 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
+                            <div style={{ width: 4, height: 24, background: "var(--accent)", borderRadius: 2 }} />
+                            <h2 style={styles.sectionTitle}>Compliance & Governance</h2>
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+                            {/* Score Card */}
+                            <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 12, boxShadow: "var(--shadow-sm)" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13 }}>
+                                    <Activity size={16} style={{ color: "var(--accent)" }} />
+                                    OVERALL COMPLIANCE SCORE
+                                </div>
+                                <div style={{ fontSize: 48, fontWeight: 900, fontFamily: "var(--font-display)", color: tool.compliance_score >= 80 ? "#10B981" : tool.compliance_score >= 50 ? "#F59E0B" : "#EF4444" }}>
+                                    {tool.compliance_score}
+                                    <span style={{ fontSize: 18, color: "var(--muted)", fontWeight: 500 }}>/100</span>
+                                </div>
+                            </div>
+
+                            {/* Risk Tier & GDPR */}
+                            <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 16, boxShadow: "var(--shadow-sm)" }}>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13, marginBottom: 8 }}>
+                                        <ShieldCheck size={16} style={{ color: "var(--accent)" }} />
+                                        EU AI ACT RISK TIER
+                                    </div>
+                                    <RiskBadge tier={tool.eu_ai_act_risk_tier} />
+                                </div>
+                                <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
+                                        <Globe size={16} style={{ color: "var(--accent)" }} />
+                                        DATA GOVERNANCE
+                                    </div>
+                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                        <span style={{ padding: "6px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: tool.gdpr_compliant ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)", color: tool.gdpr_compliant ? "#10B981" : "#EF4444", border: `1px solid ${tool.gdpr_compliant ? "rgba(16,185,129,0.2)" : "rgba(239,68,68,0.2)"}` }}>
+                                            {tool.gdpr_compliant ? "✓ GDPR Compliant" : "✕ Non-Compliant"}
+                                        </span>
+                                        <span style={{ padding: "6px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: tool.trains_on_user_data ? "rgba(245,158,11,0.1)" : "rgba(16,185,129,0.1)", color: tool.trains_on_user_data ? "#F59E0B" : "#10B981", border: `1px solid ${tool.trains_on_user_data ? "rgba(245,158,11,0.2)" : "rgba(16,185,129,0.2)"}` }}>
+                                            {tool.trains_on_user_data ? "Trains on User Data" : "No User Training"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Transparency & Governance */}
+                            <div style={{ background: "var(--background)", border: "1px solid var(--border)", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 16, boxShadow: "var(--shadow-sm)" }}>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13 }}>
+                                            <TrendingUp size={16} style={{ color: "var(--accent)" }} />
+                                            TRANSPARENCY INDEX
+                                        </div>
+                                        <span style={{ fontWeight: 800, color: "var(--foreground)" }}>{tool.transparency_index}%</span>
+                                    </div>
+                                    <div style={{ height: 6, background: "var(--primary)", borderRadius: 3, overflow: "hidden" }}>
+                                        <div style={{ height: "100%", width: `${tool.transparency_index}%`, background: "var(--accent)", borderRadius: 3 }} />
+                                    </div>
+                                </div>
+                                <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13, marginBottom: 8 }}>
+                                        <CheckCircle size={16} style={{ color: "var(--accent)" }} />
+                                        GOVERNANCE GRADE
+                                    </div>
+                                    <div style={{ fontSize: 24, fontWeight: 900, color: "var(--foreground)", fontFamily: "var(--font-display)" }}>
+                                        Grade {tool.data_governance_grade}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Agent Sandbox */}
                 <div style={{ marginTop: 100 }}>
