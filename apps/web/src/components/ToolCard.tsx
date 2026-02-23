@@ -36,7 +36,8 @@ import {
     Megaphone,
     BarChart,
     Database,
-    Eye
+    Eye,
+    Info
 } from 'lucide-react';
 
 const CategoryIcon = ({ category, size = 12 }: { category: string, size?: number }) => {
@@ -188,7 +189,9 @@ export const Badge = ({ text }: { text: string | null }) => {
     );
 };
 
-export const RiskBadge = ({ tier }: { tier: string | null }) => {
+export const RiskBadge = ({ tier, rationale }: { tier: string | null, rationale?: string | null }) => {
+    const [showTooltip, setShowTooltip] = useState(false);
+
     if (!tier || tier === 'Unclassified') return null;
 
     let color = "";
@@ -202,21 +205,78 @@ export const RiskBadge = ({ tier }: { tier: string | null }) => {
         default: return null;
     }
 
+    const fallbackRationale = "Score based on publicly available documentation. See our full methodology.";
+
     return (
-        <span style={{
-            color,
-            border: `1px solid ${color}40`,
-            background: `${color}10`,
-            borderRadius: 6,
-            padding: "4px 8px",
-            fontSize: "11px",
-            fontWeight: 600,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 5
-        }}>
+        <span
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowTooltip(!showTooltip); }}
+            style={{
+                position: "relative",
+                color,
+                border: `1px solid ${color}40`,
+                background: `${color}10`,
+                borderRadius: 6,
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontWeight: 600,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                cursor: "pointer"
+            }}
+        >
             {icon}
             {tier} Risk
+            <Info size={10} style={{ opacity: 0.7, marginLeft: 2 }} />
+
+            {showTooltip && (
+                <div style={{
+                    position: "absolute",
+                    bottom: "100%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    marginBottom: 8,
+                    background: "rgba(0,0,0,0.92)",
+                    color: "#FFF",
+                    fontSize: 12,
+                    minWidth: 200,
+                    maxWidth: 280,
+                    borderRadius: 8,
+                    padding: "10px 14px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                    zIndex: 100,
+                    textAlign: "left",
+                    lineHeight: 1.4,
+                    fontWeight: 400,
+                    whiteSpace: "normal",
+                    pointerEvents: "auto"
+                }}>
+                    <div style={{ opacity: 0.9, marginBottom: 8 }}>
+                        {rationale || fallbackRationale}
+                    </div>
+                    <a
+                        href="/methodology"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 4 }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        Full methodology <ExternalLink size={10} />
+                    </a>
+                    {/* Tooltip Caret */}
+                    <div style={{
+                        position: "absolute",
+                        bottom: -4,
+                        left: "50%",
+                        marginLeft: -4,
+                        borderWidth: "4px 4px 0 4px",
+                        borderStyle: "solid",
+                        borderColor: "rgba(0,0,0,0.92) transparent transparent transparent"
+                    }} />
+                </div>
+            )}
         </span>
     );
 };
@@ -249,8 +309,14 @@ const styles = {
         textDecoration: "none",
         display: "flex",
         flexDirection: "column" as const,
-        minHeight: 380
+        minHeight: 340
     }),
+    badgeRow: {
+        display: "flex",
+        flexWrap: "wrap" as const,
+        gap: 8,
+        marginTop: 16
+    },
     toolHeader: { display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 16 },
     toolLogo: { width: 56, height: 56, borderRadius: 12, background: "var(--primary)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0, overflow: "hidden" },
     toolName: { fontSize: 18, fontWeight: 700, color: "var(--foreground)", marginBottom: 4, letterSpacing: "-0.5px", fontFamily: "var(--font-display)" },
@@ -356,18 +422,20 @@ export default function ToolCard({ tool, inCompare, isSaved, onToggleSave, onTog
                                 <CheckCircle2 size={18} fill="var(--accent)" stroke="#000" strokeWidth={2} />
                             </div>
                         )}
-                        <Badge text={tool.badge} />
-                        <RiskBadge tier={tool.eu_ai_act_risk_tier} />
-                        {tool.gdpr_compliant && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: "#10B981", background: "rgba(16,185,129,0.1)", padding: "4px 8px", borderRadius: 6, display: "flex", alignItems: "center", gap: 4 }}>
-                                <CheckCircle2 size={10} /> GDPR
-                            </span>
-                        )}
-                        {tool.trains_on_user_data && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: "#F59E0B", background: "rgba(245,158,11,0.1)", padding: "4px 8px", borderRadius: 6, display: "flex", alignItems: "center", gap: 4 }}>
-                                <Database size={10} /> Trains Data
-                            </span>
-                        )}
+                        <div style={styles.badgeRow}>
+                            <Badge text={tool.badge} />
+                            <RiskBadge tier={tool.eu_ai_act_risk_tier} rationale={tool.scoring_rationale} />
+                            {tool.gdpr_compliant && (
+                                <span style={{ padding: "4px 8px", borderRadius: 6, fontSize: "11px", fontWeight: 600, background: "rgba(16,185,129,0.1)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)", display: "flex", gap: 4, alignItems: "center" }}>
+                                    <CheckCircle2 size={10} /> GDPR
+                                </span>
+                            )}
+                            {tool.trains_on_user_data && (
+                                <span style={{ padding: "4px 8px", borderRadius: 6, fontSize: "11px", fontWeight: 600, background: "rgba(245,158,11,0.1)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.2)", display: "flex", gap: 4, alignItems: "center" }}>
+                                    <Database size={10} /> Trains Data
+                                </span>
+                            )}
+                        </div>
                     </div>
                     <div style={styles.toolCompany}>
                         <CategoryIcon category={tool.category} />

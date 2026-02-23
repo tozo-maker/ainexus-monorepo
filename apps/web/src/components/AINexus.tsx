@@ -103,7 +103,7 @@ import CodeIDE from "./layouts/CodeIDE";
 // @ts-ignore
 import ToolGlobe from "./spatial/ToolGlobe";
 
-export default function AINexus({ initialTools, initialModels, news, videos, initialIntent = "GENERAL", user, initialHeroStats = { tools: 0, categories: 0, gdpr: 0 } }: { initialTools: any[], initialModels: any[], news: any[], videos: any[], initialIntent?: string, user?: any, initialHeroStats?: { tools: number, categories: number, gdpr: number } }) {
+export default function AINexus({ initialTools, initialModels, news, videos, initialIntent = "GENERAL", user, initialHeroStats = { tools: 0, categories: 0, gdpr: 0, euScored: 0 } }: { initialTools: any[], initialModels: any[], news: any[], videos: any[], initialIntent?: string, user?: any, initialHeroStats?: { tools: number, categories: number, gdpr: number, euScored: number } }) {
     const router = useRouter();
 
     const searchParams = useSearchParams();
@@ -459,7 +459,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                             { val: initialHeroStats.tools.toLocaleString(), label: "Tools Catalogued", sub: "Enterprise & startup catalog", icon: <LayoutGrid size={24} /> },
                             { val: initialHeroStats.categories.toLocaleString(), label: "Categories Covered", sub: "Organized intents", icon: <Cpu size={24} /> },
                             { val: initialHeroStats.gdpr.toLocaleString(), label: "GDPR Graded", sub: "Compliance transparency", icon: <ShieldCheck size={24} /> },
-                            { val: "24/7", label: "Real-time Sync", sub: "Continuous data enrichment", icon: <Globe size={24} /> },
+                            { val: initialHeroStats.euScored.toLocaleString(), label: "EU AI Act Scored", sub: "Calculated risk scoring", icon: <Globe size={24} /> },
                         ].map((s, i) => (
                             <div key={i} style={styles.statCard}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
@@ -843,6 +843,14 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                     </button>
                 </div>
             )}
+            {/* Global Footer */}
+            <div style={{ padding: "40px 32px", borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--muted)", fontSize: 13, display: "flex", flexDirection: "column", gap: 12, alignItems: "center", background: "rgba(12,10,9,0.5)", marginTop: "auto" }}>
+                <div>© 2026 AI Nexus. Independent Intelligence Directory.</div>
+                <div style={{ display: "flex", gap: 24, fontWeight: 600 }}>
+                    <a href="/methodology" style={{ color: "var(--muted)", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--accent)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}>Methodology</a>
+                    <a href="mailto:hello@ainexus.io" style={{ color: "var(--muted)", textDecoration: "none", transition: "color 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--accent)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--muted)"}>Contact</a>
+                </div>
+            </div>
 
             <ChatInterface />
         </div>

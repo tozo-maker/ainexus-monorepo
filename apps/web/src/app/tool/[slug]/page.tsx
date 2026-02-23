@@ -260,9 +260,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                 {/* Compliance & Governance */}
                 {tool.eu_ai_act_risk_tier && (
                     <div style={{ marginTop: 100 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                            <div style={{ width: 4, height: 24, background: "var(--accent)", borderRadius: 2 }} />
-                            <h2 style={styles.sectionTitle}>Compliance & Governance</h2>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                                <div style={{ width: 4, height: 24, background: "var(--accent)", borderRadius: 2 }} />
+                                <h2 style={styles.sectionTitle}>Compliance & Governance</h2>
+                            </div>
+                            <a href="/methodology" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--accent)", textDecoration: "none" }}>
+                                How we score this <ExternalLink size={12} />
+                            </a>
                         </div>
 
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
@@ -285,7 +290,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                                         <ShieldCheck size={16} style={{ color: "var(--accent)" }} />
                                         EU AI ACT RISK TIER
                                     </div>
-                                    <RiskBadge tier={tool.eu_ai_act_risk_tier} />
+                                    <RiskBadge tier={tool.eu_ai_act_risk_tier} rationale={(tool as any).scoring_rationale} />
                                 </div>
                                 <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontWeight: 600, fontSize: 13, marginBottom: 12 }}>
@@ -328,6 +333,24 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                                 </div>
                             </div>
                         </div>
+
+                        {/* Scoring Rationale & Review Row */}
+                        <div style={{ marginTop: 24, padding: "24px 32px", background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", borderRadius: 16, display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <div style={{ flex: "1 1 min-content", minWidth: 300 }}>
+                                <strong style={{ fontSize: 13, fontWeight: 700, color: "var(--foreground)", display: "block", marginBottom: 8 }}>Why this score:</strong>
+                                <p style={{ margin: 0, fontSize: 14, color: "var(--muted)", fontStyle: "italic", lineHeight: 1.6 }}>
+                                    &quot;{(tool as any).scoring_rationale || 'Score based on publicly available documentation. See our full methodology.'}&quot;
+                                </p>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end", flexShrink: 0 }}>
+                                <div style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                                    Last reviewed: <span style={{ color: "var(--foreground)" }}>{(tool as any).compliance_last_reviewed ? new Date((tool as any).compliance_last_reviewed).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown'}</span>
+                                </div>
+                                <a href="mailto:compliance@ainexus.io" style={{ fontSize: 13, color: "var(--muted)", textDecoration: "underline", opacity: 0.8 }}>
+                                    Request a review &rarr;
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -365,6 +388,6 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

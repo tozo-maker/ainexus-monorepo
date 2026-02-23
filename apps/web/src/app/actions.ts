@@ -367,15 +367,63 @@ function formatViews(n: number) {
 
 export async function getHeroStats() {
   const supabase = await createClient();
-  const [{ count: toolsCount }, { count: categoriesCount }, { count: gdprCount }] = await Promise.all([
+  const [{ count: toolsCount }, { count: categoriesCount }, { count: gdprCount }, { count: euScoredCount }] = await Promise.all([
     supabase.from('tools').select('*', { count: 'exact', head: true }),
     supabase.from('categories').select('*', { count: 'exact', head: true }),
-    supabase.from('tools').select('*', { count: 'exact', head: true }).eq('gdpr_compliant', true)
+    supabase.from('tools').select('*', { count: 'exact', head: true }).eq('gdpr_compliant', true),
+    supabase.from('tools').select('*', { count: 'exact', head: true }).not('eu_ai_act_risk_tier', 'is', null).neq('eu_ai_act_risk_tier', 'unclassified')
   ]);
 
   return {
     tools: toolsCount || 0,
     categories: categoriesCount || 0,
-    gdpr: gdprCount || 0
+    gdpr: gdprCount || 0,
+    euScored: euScoredCount || 0
   };
 }
+
+// -------------------------------------------------------------------------------------------------
+// PHASE 6: COMPLIANCE ENFORCEMENT — Tool Submission Flow
+// -------------------------------------------------------------------------------------------------
+
+/**
+ * Saves a new tool or updates an existing tool in the database.
+ * Enforces rigorous compliance checks according to the AINexus Scoring Rubric.
+ */
+export async function saveTool(toolData: any) {
+  // ⚠️ All compliance scores must follow /docs/SCORING_RUBRIC.md
+  // Do not estimate — use the EU AI Act decision tree in that file.
+
+  if (!toolData.eu_ai_act_risk_tier || toolData.eu_ai_act_risk_tier.trim() === '') {
+    throw new Error("Risk tier is required. See /docs/SCORING_RUBRIC.md for guidance.");
+  }
+
+  // Set compliance_last_reviewed automatically to today's date whenever any compliance field is updated
+  const complianceFields = [
+    'eu_ai_act_risk_tier', 'compliance_score', 'data_governance_grade',
+    'transparency_index', 'gdpr_compliant', 'trains_on_user_data'
+  ];
+
+  const isUpdatingCompliance = complianceFields.some(field => toolData[field] !== undefined);
+
+  const finalPayload = { ...toolData };
+
+  if (isUpdatingCompliance) {
+    finalPayload.compliance_last_reviewed = new Date().toISOString().split('T')[0];
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('tools')
+    .upsert(finalPayload)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error saving tool:", error);
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
