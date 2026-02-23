@@ -3,6 +3,12 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import Link from "next/link";
 import { Settings, Bookmark, Star, ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "User Dashboard | AINexus",
+    robots: "noindex, nofollow"
+};
 
 export default async function DashboardPage() {
     const cookieStore = await cookies();

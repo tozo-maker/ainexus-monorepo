@@ -35,9 +35,14 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
         title: `Best ${name} AI Tools - Compare Pricing & Features | AINexus`,
         description: description || `Discover and compare the best ${name} AI tools. Read reviews, check pricing, and find the perfect AI for your workflow.`,
         openGraph: {
-            title: `Best ${name} AI Tools for 2026`,
+            title: `Best ${name} AI Tools for 2026 | AINexus`,
             description: `A curated, up-to-date directory of ${name} AI tools. We track pricing, platforms, APIs, and community score.`,
             type: 'website',
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `Best ${name} AI Tools - Compare Pricing & Features | AINexus`,
+            description: description || `Discover and compare the best ${name} AI tools. Read reviews, check pricing, and find the perfect AI for your workflow.`,
         }
     };
 }

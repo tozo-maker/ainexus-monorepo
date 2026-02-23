@@ -51,9 +51,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title: `${name1} vs ${name2} | Intelligence Comparison | AI Nexus`,
         description: `Objective, side-by-side comparison of ${name1} and ${name2}. Discover which AI tool is best for your specific use cases, comparing pricing, APIs, platforms, and features.`,
         openGraph: {
-            title: `${name1} vs ${name2} Comparison`,
+            title: `${name1} vs ${name2} Comparison | AINexus`,
             description: `Comparing architecture, API access, and capabilities between ${name1} and ${name2}.`,
             type: 'article',
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${name1} vs ${name2} | Intelligence Comparison | AI Nexus`,
+            description: `Objective, side-by-side comparison of ${name1} and ${name2}. Discover which AI tool is best for your specific use cases.`,
         }
     };
 }

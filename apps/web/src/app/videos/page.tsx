@@ -5,9 +5,21 @@ import SharedNavbar from "@/components/SharedNavbar";
 import { Play, TrendingUp, Clock, Filter, Search } from "lucide-react";
 import Link from "next/link";
 
-export const metadata = {
-    title: "AI Video Library | AINexus",
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "AI Video Library — Tutorials & Reviews | AINexus",
     description: "Curated YouTube tutorials, reviews, and guides for the top AI tools.",
+    openGraph: {
+        title: "AI Video Library — Tutorials & Reviews",
+        description: "Watch expert deep dives into the newest AI software and language models.",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "AI Video Library — Tutorials & Reviews",
+        description: "Watch expert deep dives into the newest AI software and language models.",
+    }
 };
 
 function formatViews(num: number) {

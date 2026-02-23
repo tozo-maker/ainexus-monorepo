@@ -4,6 +4,13 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import SharedNavbar from "@/components/SharedNavbar";
 import { Bell, Mail, ShieldAlert, Cpu } from "lucide-react";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Alerts & Preferences | AINexus",
+    description: "Manage your AINexus email digests, pricing alerts, and personalized AI recommendations.",
+    robots: "noindex, nofollow"
+};
 
 export default async function AlertsPage() {
     const cookieStore = await cookies();

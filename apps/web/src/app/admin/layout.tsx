@@ -4,6 +4,12 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutDashboard, Users, Database, Settings, ExternalLink } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Admin Dashboard | AINexus",
+    robots: "noindex, nofollow"
+};
 
 export default async function AdminLayout({
     children,

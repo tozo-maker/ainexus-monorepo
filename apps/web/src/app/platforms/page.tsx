@@ -6,9 +6,21 @@ import { getModels } from "@/app/actions";
 import { Server, Database, Activity, Code, ExternalLink, Zap } from "lucide-react";
 import Link from "next/link";
 
-export const metadata = {
-    title: "AI Platforms & Models | AINexus",
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "AI Platforms & Models Directory | AINexus",
     description: "Compare core foundational LLMs, vectors databases, and cloud APIs powering the AI ecosystem.",
+    openGraph: {
+        title: "AI Platforms & Models Directory | AINexus",
+        description: "Compare core foundational LLMs, vectors databases, and cloud APIs powering the AI ecosystem.",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "AI Platforms & Models Directory | AINexus",
+        description: "Compare core foundational LLMs, vectors databases, and cloud APIs powering the AI ecosystem.",
+    }
 };
 
 export default async function PlatformsHub() {
@@ -201,15 +213,17 @@ export default async function PlatformsHub() {
                     ))}
                 </div>
 
-                {/* Section 2: Infrastructure (Placeholder mapping) */}
-                <h2 style={styles.sectionTitle}>
-                    <Server className="text-gray-400" /> Cloud APIs & Infrastructure
-                </h2>
-                <div style={{ padding: 48, textAlign: "center", border: "1px dashed var(--border)", borderRadius: 16, background: "rgba(255,255,255,0.01)" }}>
-                    <Database size={48} className="text-gray-300 mx-auto mb-4 opacity-50" />
-                    <h3 style={{ fontSize: 20, color: "var(--foreground)", fontWeight: 600, marginBottom: 8 }}>Vector DBs & Cloud Architecture</h3>
-                    <p style={{ color: "var(--muted)", maxWidth: 500, margin: "0 auto" }}>We are currently rolling out structured comparison tables for Vector Databases (Pinecone, Weaviate, Milvus) and MLOps platforms.</p>
-                </div>
+                {/* Section 2: Infrastructure */}
+                <section>
+                    <h2 style={styles.sectionTitle}>
+                        <Server className="text-gray-400" /> Cloud APIs & Infrastructure
+                    </h2>
+                    <div style={{ padding: 48, textAlign: "center", border: "1px dashed var(--border)", borderRadius: 16, background: "rgba(255,255,255,0.01)" }}>
+                        <Database size={48} className="text-gray-300 mx-auto mb-4 opacity-50" />
+                        <h3 style={{ fontSize: 20, color: "var(--foreground)", fontWeight: 600, marginBottom: 8 }}>Vector DBs & Cloud Architecture</h3>
+                        <p style={{ color: "var(--muted)", maxWidth: 500, margin: "0 auto" }}>We are currently rolling out structured comparison tables for specialized vector networks (Pinecone, Weaviate, Milvus) and deployment platforms.</p>
+                    </div>
+                </section>
             </main>
         </div>
     );
