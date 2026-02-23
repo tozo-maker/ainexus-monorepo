@@ -79,7 +79,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     return (
         <div style={styles.app as any}>
             <div style={{ position: "fixed", inset: 0, backgroundImage: "linear-gradient(rgba(79,70,229,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(79,70,229,0.03) 1px, transparent 1px)", backgroundSize: "40px 40px", pointerEvents: "none", zIndex: 0 }} />
-            <SharedNavbar user={user} activeNav="categories" />
+            <SharedNavbar user={user} />
 
             <main style={styles.container as any}>
                 <div style={{ marginBottom: 40 }}>

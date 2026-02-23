@@ -114,7 +114,7 @@ export default function MethodologyPage() {
 
     return (
         <div style={styles.page}>
-            <SharedNavbar activeNav="" />
+            <SharedNavbar />
 
             <main style={styles.container}>
                 <h1 style={styles.header}>How We Score AI Tools</h1>

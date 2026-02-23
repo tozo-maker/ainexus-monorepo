@@ -42,7 +42,7 @@ export default async function DashboardLayout({
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--background)" }}>
-            <SharedNavbar activeNav="discover" user={user} />
+            <SharedNavbar user={user} />
             <main style={{ flex: 1, padding: "32px", maxWidth: 1200, margin: "0 auto", width: "100%" }}>
                 {children}
             </main>

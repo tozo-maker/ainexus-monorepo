@@ -110,7 +110,6 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
 
     // Initialize search state from URL, defaulting to empty string
     const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-    const [activeNav, setActiveNav] = useState("discover");
     const [activeCategory, setActiveCategory] = useState("All");
     const [priceFilter, setPriceFilter] = useState("All");
     const [euRisk, setEuRisk] = useState("All");
@@ -357,7 +356,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
     }
 
     // Phase 11: Generative UI - Video Dashboard
-    if (initialIntent === "VIDEO" && activeNav === "discover") {
+    if (initialIntent === "VIDEO") {
         return (
             <div style={styles.app}>
                 <nav style={styles.nav}>
@@ -376,7 +375,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
     }
 
     // Phase 11: Generative UI - Code IDE
-    if (initialIntent === "CODE" && activeNav === "discover") {
+    if (initialIntent === "CODE") {
         // CodeIDE handles its own full layout
         return <CodeIDE tools={tools} onExit={() => window.location.href = "/"} />;
     }
@@ -403,418 +402,156 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
             </div>
 
             <SharedNavbar
-                activeNav={activeNav}
-                setActiveNav={setActiveNav}
                 user={user}
                 compareListCount={compareList.length}
             />
 
             {/* HERO */}
-            {activeNav === "discover" && (
-                <div style={styles.hero}>
-                    <div style={styles.heroLabel}>
-                        <Zap size={10} fill="var(--accent)" stroke="none" />
-                        <span>The Ultimate AI Intelligence Hub</span>
+            <div style={styles.hero}>
+                <div style={styles.heroLabel}>
+                    <Zap size={10} fill="var(--accent)" stroke="none" />
+                    <span>The Ultimate AI Intelligence Hub</span>
+                </div>
+                <h1 style={styles.heroTitle}>Track The Entire<br />AI Ecosystem.</h1>
+                <p style={styles.heroSub}>The world's most comprehensive catalog of AI tools, models, and real-time intelligence — updated every hour.</p>
+                <div style={styles.searchWrap}>
+                    <span style={styles.searchIcon}>
+                        <Search size={20} />
+                    </span>
+                    <input
+                        style={styles.searchInput}
+                        placeholder={`Search ${initialHeroStats.tools.toLocaleString()}+ tools, verified models, and compliance reports...`}
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <div style={styles.searchMeta}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <LayoutGrid size={14} style={{ color: "var(--accent)" }} />
+                        <span><span style={styles.statNum}>{initialHeroStats.tools.toLocaleString()}</span> Tools</span>
                     </div>
-                    <h1 style={styles.heroTitle}>Track The Entire<br />AI Ecosystem.</h1>
-                    <p style={styles.heroSub}>The world's most comprehensive catalog of AI tools, models, and real-time intelligence — updated every hour.</p>
-                    <div style={styles.searchWrap}>
-                        <span style={styles.searchIcon}>
-                            <Search size={20} />
-                        </span>
-                        <input
-                            style={styles.searchInput}
-                            placeholder={`Search ${initialHeroStats.tools.toLocaleString()}+ tools, verified models, and compliance reports...`}
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                        />
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Cpu size={14} style={{ color: "var(--accent)" }} />
+                        <span><span style={styles.statNum}>80+</span> Models</span>
                     </div>
-                    <div style={styles.searchMeta}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <LayoutGrid size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>{initialHeroStats.tools.toLocaleString()}</span> Tools</span>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <Cpu size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>80+</span> Models</span>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <ShieldCheck size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>{initialHeroStats.gdpr.toLocaleString()}</span> GDPR Graded</span>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <Video size={14} style={{ color: "var(--accent)" }} />
-                            <span><span style={styles.statNum}>500+</span> Guides</span>
-                        </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <ShieldCheck size={14} style={{ color: "var(--accent)" }} />
+                        <span><span style={styles.statNum}>{initialHeroStats.gdpr.toLocaleString()}</span> GDPR Graded</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Video size={14} style={{ color: "var(--accent)" }} />
+                        <span><span style={styles.statNum}>500+</span> Guides</span>
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* ==================== DISCOVER ==================== */}
-            {activeNav === "discover" && (
-                <div style={styles.container}>
-                    {/* Stats row */}
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 48 }}>
-                        {[
-                            { val: initialHeroStats.tools.toLocaleString(), label: "Tools Catalogued", sub: "Enterprise & startup catalog", icon: <LayoutGrid size={24} /> },
-                            { val: initialHeroStats.categories.toLocaleString(), label: "Categories Covered", sub: "Organized intents", icon: <Cpu size={24} /> },
-                            { val: initialHeroStats.gdpr.toLocaleString(), label: "GDPR Graded", sub: "Compliance transparency", icon: <ShieldCheck size={24} /> },
-                            { val: initialHeroStats.euScored.toLocaleString(), label: "EU AI Act Scored", sub: "Calculated risk scoring", icon: <Globe size={24} /> },
-                        ].map((s, i) => (
-                            <div key={i} style={styles.statCard}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                                    <div style={styles.statVal}>{s.val}</div>
-                                    <div style={{ color: "var(--accent)", opacity: 0.6 }}>{s.icon}</div>
-                                </div>
-                                <div>
-                                    <div style={styles.statLabel}>{s.label}</div>
-                                    <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>{s.sub}</div>
-                                </div>
+            <div style={styles.container}>
+                {/* Stats row */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, marginBottom: 48 }}>
+                    {[
+                        { val: initialHeroStats.tools.toLocaleString(), label: "Tools Catalogued", sub: "Enterprise & startup catalog", icon: <LayoutGrid size={24} /> },
+                        { val: initialHeroStats.categories.toLocaleString(), label: "Categories Covered", sub: "Organized intents", icon: <Cpu size={24} /> },
+                        { val: initialHeroStats.gdpr.toLocaleString(), label: "GDPR Graded", sub: "Compliance transparency", icon: <ShieldCheck size={24} /> },
+                        { val: initialHeroStats.euScored.toLocaleString(), label: "EU AI Act Scored", sub: "Calculated risk scoring", icon: <Globe size={24} /> },
+                    ].map((s, i) => (
+                        <div key={i} style={styles.statCard}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                                <div style={styles.statVal}>{s.val}</div>
+                                <div style={{ color: "var(--accent)", opacity: 0.6 }}>{s.icon}</div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Filter Bar */}
-                    <div style={styles.filterBar}>
-                        <span style={styles.filterLabel}>Category</span>
-                        {CATEGORIES.map((cat: string) => (
-                            <div key={cat} style={styles.filterChip(activeCategory === cat)} onClick={() => setActiveCategory(cat)}>{cat}</div>
-                        ))}
-                        <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
-                            <label style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", color: "var(--foreground)" }}>
-                                <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)} style={{ accentColor: "var(--accent)" }} />
-                                GDPR ✓
-                            </label>
-
-                            <span style={{ width: 1, height: 16, background: "var(--border)", margin: "0 4px" }} />
-
-                            <span style={styles.filterLabel}>EU Risk</span>
-                            <select style={styles.select} value={euRisk} onChange={e => setEuRisk(e.target.value)}>
-                                {["All", "Minimal", "Limited", "High", "Unacceptable", "Unclassified"].map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
-
-                            <span style={styles.filterLabel}>Price</span>
-                            <select style={styles.select} value={priceFilter} onChange={e => setPriceFilter(e.target.value)}>
-                                {["All", "Free", "Freemium", "Paid"].map(p => <option key={p}>{p}</option>)}
-                            </select>
-                            <span style={styles.filterLabel}>Sort</span>
-                            <select style={styles.select} value={sortBy} onChange={e => setSortBy(e.target.value)}>
-                                <option value="relevance" disabled={!searchQuery}>Relevance</option>
-                                <option value="rating">Top Rated</option>
-                                <option value="reviews">Most Reviews</option>
-                                <option value="trending">Trending</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Results count */}
-                    <div style={{ marginBottom: 16, color: "#475569", fontSize: 13, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div>
-                            Showing <span style={{ color: "#60A5FA", fontWeight: 600 }}>{tools.length}</span> of <span style={{ color: "#94A3B8" }}>{totalResults}</span> tools
-                            {compareList.length > 0 && <span style={{ marginLeft: 16, color: "#F59E0B" }}>· {compareList.length} selected for comparison</span>}
-                        </div>
-                        {loading && <div style={{ fontSize: 11, color: "#60A5FA", fontWeight: 600 }}>Loading tools...</div>}
-                    </div>
-
-                    {/* Tool Grid */}
-                    <div style={styles.grid2}>
-                        {tools.map((tool: any, idx: number) => (
-                            <div
-                                key={tool.id}
-                                className="stagger-item"
-                                style={{ "--index": idx } as React.CSSProperties}
-                            >
-                                <ToolCard
-                                    tool={tool}
-                                    inCompare={!!compareList.find(t => t.id === tool.id)}
-                                    isSaved={saved.includes(tool.id)}
-                                    onToggleSave={toggleSave}
-                                    onToggleCompare={toggleCompare}
-                                />
+                            <div>
+                                <div style={styles.statLabel}>{s.label}</div>
+                                <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>{s.sub}</div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Load More */}
-                    {hasMore && (
-                        <div style={{ marginTop: 40, textAlign: "center" }}>
-                            <button
-                                onClick={() => fetchTools(false)}
-                                disabled={loading}
-                                style={{
-                                    ...styles.navBtn,
-                                    background: "rgba(59,130,246,0.1)",
-                                    border: "1px solid rgba(59,130,246,0.2)",
-                                    color: "#60A5FA",
-                                    padding: "12px 40px",
-                                    opacity: loading ? 0.5 : 1
-                                }}
-                            >
-                                {loading ? "Loading..." : "Load More Tools"}
-                            </button>
                         </div>
-                    )}
+                    ))}
                 </div>
-            )}
 
-            {/* ==================== MODELS ==================== */}
-            {activeNav === "models" && (
-                <div style={styles.container}>
-                    {/* Live Pulse Ticker */}
-                    <div style={{ marginBottom: 32 }}>
-                        <LivePulse />
-                    </div>
+                {/* Filter Bar */}
+                <div style={styles.filterBar}>
+                    <span style={styles.filterLabel}>Category</span>
+                    {CATEGORIES.map((cat: string) => (
+                        <div key={cat} style={styles.filterChip(activeCategory === cat)} onClick={() => setActiveCategory(cat)}>{cat}</div>
+                    ))}
+                    <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
+                        <label style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontWeight: 600, cursor: "pointer", color: "var(--foreground)" }}>
+                            <input type="checkbox" checked={gdpr} onChange={e => setGdpr(e.target.checked)} style={{ accentColor: "var(--accent)" }} />
+                            GDPR ✓
+                        </label>
 
-                    <div style={{ paddingTop: 40, marginBottom: 40 }}>
-                        <div style={styles.sectionTitle}>Foundation Intelligence</div>
-                        <div style={styles.sectionSub}>Comprehensive tracking of major LLMs with benchmarks, capabilities, and real-time pricing.</div>
-                    </div>
+                        <span style={{ width: 1, height: 16, background: "var(--border)", margin: "0 4px" }} />
 
-                    <div style={{ background: "rgba(28,25,23,0.3)", borderRadius: 16, overflow: "hidden", border: "1px solid var(--border)" }}>
-                        <table style={styles.modelTable}>
-                            <thead>
-                                <tr>
-                                    {["Model", "Company", "Context", "MMLU / Arena", "Pricing (1M)", "Capabilities"].map(h => (
-                                        <th key={h} style={styles.th}>{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {MODELS.map((m: any, i: number) => (
-                                    <tr key={m.id}>
-                                        <td style={styles.td}>
-                                            <div style={{ fontWeight: 800, color: "#FFF", marginBottom: 4 }}>{m.name}</div>
-                                            <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
-                                                <Clock size={10} /> {m.release}
-                                            </div>
-                                        </td>
-                                        <td style={styles.td}>
-                                            <span style={{ color: "var(--muted)", fontWeight: 600 }}>{m.company}</span>
-                                        </td>
-                                        <td style={styles.td}>
-                                            <span style={{ color: "var(--accent)", fontWeight: 800, fontFamily: "monospace", fontSize: 13 }}>{m.context}</span>
-                                        </td>
-                                        <td style={styles.td}>
-                                            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                    <span style={{ fontWeight: 800, color: m.mmlu > 88 ? "#34D399" : "#FFF", fontSize: 12, width: 30 }}>{m.mmlu}</span>
-                                                    <div style={styles.scoreTrack}><div style={styles.scoreBar(m.mmlu, 100, m.mmlu > 88 ? "#34D399" : "var(--accent)")} /></div>
-                                                </div>
-                                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                    <span style={{ fontWeight: 800, color: "#F59E0B", fontSize: 12, width: 30 }}>{m.arena}</span>
-                                                    <div style={styles.scoreTrack}><div style={styles.scoreBar(m.arena, 1350, "#F59E0B")} /></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td style={styles.td}>
-                                            {m.opensource ? (
-                                                <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#34D399", fontWeight: 800, fontSize: 12 }}>
-                                                    <Globe size={12} /> OPEN SOURCE
-                                                </div>
-                                            ) : (
-                                                <div style={{ fontFamily: "monospace", fontSize: 13, color: "var(--muted)" }}>
-                                                    <span style={{ color: "var(--accent)" }}>${m.price_in.toFixed(2)}</span> / <span style={{ color: "#FFF" }}>${m.price_out.toFixed(2)}</span>
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td style={styles.td}>
-                                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                                                {m.multimodal && <span style={{ ...styles.tag, color: "#A78BFA", background: "rgba(167,139,250,0.1)", borderColor: "rgba(167,139,250,0.2)" }}>MULTIMODAL</span>}
-                                                {m.opensource && <span style={{ ...styles.tag, color: "#34D399", background: "rgba(52,211,153,0.1)", borderColor: "rgba(52,211,153,0.2)" }}>OPEN</span>}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <span style={styles.filterLabel}>EU Risk</span>
+                        <select style={styles.select} value={euRisk} onChange={e => setEuRisk(e.target.value)}>
+                            {["All", "Minimal", "Limited", "High", "Unacceptable", "Unclassified"].map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+
+                        <span style={styles.filterLabel}>Price</span>
+                        <select style={styles.select} value={priceFilter} onChange={e => setPriceFilter(e.target.value)}>
+                            {["All", "Free", "Freemium", "Paid"].map(p => <option key={p}>{p}</option>)}
+                        </select>
+                        <span style={styles.filterLabel}>Sort</span>
+                        <select style={styles.select} value={sortBy} onChange={e => setSortBy(e.target.value)}>
+                            <option value="relevance" disabled={!searchQuery}>Relevance</option>
+                            <option value="rating">Top Rated</option>
+                            <option value="reviews">Most Reviews</option>
+                            <option value="trending">Trending</option>
+                        </select>
                     </div>
                 </div>
-            )}
 
-            {/* ==================== NEWS ==================== */}
-            {activeNav === "news" && (
-                <div style={styles.container}>
-                    <div style={{ paddingTop: 40, marginBottom: 40 }}>
-                        <div style={styles.sectionTitle}>Intelligence Feed</div>
-                        <div style={styles.sectionSub}>Curated industry intelligence from 200+ global sources — updated every 15 minutes.</div>
+                {/* Results count */}
+                <div style={{ marginBottom: 16, color: "#475569", fontSize: 13, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                        Showing <span style={{ color: "#60A5FA", fontWeight: 600 }}>{tools.length}</span> of <span style={{ color: "#94A3B8" }}>{totalResults}</span> tools
+                        {compareList.length > 0 && <span style={{ marginLeft: 16, color: "#F59E0B" }}>· {compareList.length} selected for comparison</span>}
                     </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 32 }}>
-                        <div>
-                            <div style={{ fontWeight: 800, color: "var(--accent)", fontSize: 11, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 20 }}>LATEST DISPATCHES</div>
-                            <div style={{ display: "flex", flexDirection: "column" as const, gap: 4 }}>
-                                {NEWS.map((item: any, i: number) => (
-                                    <button key={item.id} style={{ ...styles.newsCard(i), border: item.hot ? "1px solid rgba(202,138,4,0.3)" : "1px solid var(--border)", background: item.hot ? "rgba(202,138,4,0.05)" : "rgba(28,25,23,0.3)", width: "100%", textAlign: "left" }}>
-                                        <div style={styles.newsEmoji}>
-                                            {item.category === "Model Release" ? <Zap size={20} /> :
-                                                item.category === "Funding" ? <Activity size={20} /> :
-                                                    item.category === "Research" ? <Cpu size={20} /> : <Newspaper size={20} />}
-                                        </div>
-                                        <div style={{ flex: 1 }}>
-                                            <div style={styles.newsTitle}>
-                                                {item.hot && <span style={{ color: "var(--accent)", marginRight: 8, fontSize: 12 }}>🔥</span>}
-                                                {he.decode(item.title)}
-                                            </div>
-                                            <div style={styles.newsMeta}>
-                                                <span style={styles.catPill(item.category)}>{item.category}</span>
-                                                <span>{item.source}</span>
-                                                <span style={{ opacity: 0.3 }}>·</span>
-                                                <span>{item.time}</span>
-                                            </div>
-                                        </div>
-                                        <ChevronRight size={20} style={{ color: "var(--muted)" }} />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div style={{ position: "sticky", top: 100, height: "fit-content" }}>
-                            <div style={{ fontWeight: 800, color: "var(--accent)", fontSize: 11, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 20 }}>TOPICS</div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                                {["Model Release", "Funding", "Research", "Open Source", "Regulation", "Milestone"].map(cat => {
-                                    const colors: Record<string, string> = { "Model Release": "#3B82F6", "Funding": "#CA8A04", "Research": "#8B5CF6", "Open Source": "#10B981", "Regulation": "#EF4444", "Milestone": "#06B6D4" };
-                                    return (
-                                        <button key={cat} style={{ padding: "16px", background: "rgba(28,25,23,0.4)", border: "1px solid var(--border)", borderRadius: 12, textAlign: "center", cursor: "pointer", transition: "all 0.2s" }}>
-                                            <div style={{ color: colors[cat] || "var(--muted)", fontWeight: 800, fontSize: 13, marginBottom: 4 }}>{cat}</div>
-                                            <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 600 }}>Active Today</div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            <div style={{ marginTop: 32, padding: 32, background: "rgba(202,138,4,0.05)", border: "1px solid rgba(202,138,4,0.15)", borderRadius: 16, textAlign: "center" }}>
-                                <div style={{ background: "rgba(202,138,4,0.1)", width: 48, height: 48, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "var(--accent)" }}>
-                                    <Mail size={24} />
-                                </div>
-                                <div style={{ fontWeight: 900, color: "#FFF", marginBottom: 8, fontSize: 18, letterSpacing: "-0.5px" }}>Elite AI Digest</div>
-                                <div style={{ color: "var(--muted)", fontSize: 14, marginBottom: 24, lineHeight: 1.5 }}>Join 50,000+ AI professionals receiving the latest intelligence every morning.</div>
-                                <div style={{ position: "relative" }}>
-                                    <input placeholder="professional@email.com" style={{ ...styles.searchInput, padding: "12px 16px", fontSize: 14, marginBottom: 12, background: "rgba(12,10,9,0.4)" }} />
-                                    <button style={styles.compareBtn}>Subscribe Now</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {loading && <div style={{ fontSize: 11, color: "#60A5FA", fontWeight: 600 }}>Loading tools...</div>}
                 </div>
-            )}
 
-            {/* ==================== VIDEOS ==================== */}
-            {activeNav === "videos" && (
-                <div style={styles.container}>
-                    <div style={{ paddingTop: 40, marginBottom: 40 }}>
-                        <div style={styles.sectionTitle}>Studio Intelligence</div>
-                        <div style={styles.sectionSub}>Expert breakdowns, tutorials, and deep-dives from the global AI community.</div>
-                    </div>
-
-                    <div style={{ display: "flex", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
-                        {["All Resources", "Tutorials", "Benchmarking", "Code Reviews", "Generative Art", "System Design"].map(cat => (
-                            <button key={cat} style={styles.filterChip(cat === "All Resources")}>{cat}</button>
-                        ))}
-                    </div>
-
-                    <div style={styles.videoGrid}>
-                        {VIDEOS.map((v: any) => (
-                            <button key={v.id} style={{ ...styles.videoCard, textAlign: "left", width: "100%", border: "none" }}
-                                onMouseEnter={e => {
-                                    const overlay = e.currentTarget.querySelector('.play-overlay') as HTMLElement;
-                                    if (overlay) overlay.style.opacity = '1';
-                                }}
-                                onMouseLeave={e => {
-                                    const overlay = e.currentTarget.querySelector('.play-overlay') as HTMLElement;
-                                    if (overlay) overlay.style.opacity = '0';
-                                }}
-                            >
-                                <div style={styles.videoThumb}>
-                                    <img src={`https://img.youtube.com/vi/${v.id}/maxresdefault.jpg`} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                    <div className="play-overlay" style={styles.videoPlay}>
-                                        <Play size={24} fill="var(--accent)" stroke="none" />
-                                    </div>
-                                    <div style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.8)", padding: "2px 6px", borderRadius: 4, fontSize: 10, fontWeight: 700 }}>
-                                        {v.duration}
-                                    </div>
-                                </div>
-                                <div style={styles.videoInfo}>
-                                    <div style={{ ...styles.videoTitle, height: "3em", overflow: "hidden" }}>{v.title}</div>
-                                    <div style={styles.videoMeta}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--accent)", fontWeight: 700 }}>
-                                            <Video size={12} /> {v.channel}
-                                        </div>
-                                        <span style={{ opacity: 0.3 }}>·</span>
-                                        <span>{v.views} views</span>
-                                    </div>
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* ==================== COMPARE ==================== */}
-            {activeNav === "compare" && (
-                <div style={styles.container}>
-                    <div style={{ paddingTop: 40, marginBottom: 40 }}>
-                        <div style={styles.sectionTitle}>Intelligence Matrix</div>
-                        <div style={styles.sectionSub}>Architectural breakdown and side-by-side performance benchmarks.</div>
-                    </div>
-
-                    {compareList.length === 0 ? (
-                        <div style={{ textAlign: "center", padding: "120px 20px", background: "rgba(28,25,23,0.3)", borderRadius: 24, border: "1px dotted var(--border)" }}>
-                            <div style={{ background: "rgba(202,138,4,0.1)", width: 64, height: 64, borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", color: "var(--accent)" }}>
-                                <Repeat size={32} />
-                            </div>
-                            <div style={{ fontSize: 20, fontWeight: 900, color: "#FFF", marginBottom: 8, letterSpacing: "-0.5px" }}>Matrix is Empty</div>
-                            <div style={{ fontSize: 14, color: "var(--muted)", maxWidth: 300, margin: "0 auto 32px", lineHeight: 1.5 }}>Select up to 3 models or tools from the intelligence catalog to begin architectural comparison.</div>
-                            <button style={styles.compareBtn} onClick={() => setActiveNav("discover")}>Initialize Catalog</button>
+                {/* Tool Grid */}
+                <div style={styles.grid2}>
+                    {tools.map((tool: any, idx: number) => (
+                        <div
+                            key={tool.id}
+                            className="stagger-item"
+                            style={{ "--index": idx } as React.CSSProperties}
+                        >
+                            <ToolCard
+                                tool={tool}
+                                inCompare={!!compareList.find(t => t.id === tool.id)}
+                                isSaved={saved.includes(tool.id)}
+                                onToggleSave={toggleSave}
+                                onToggleCompare={toggleCompare}
+                            />
                         </div>
-                    ) : (
-                        <div>
-                            <div style={{ display: "grid", gridTemplateColumns: `240px ${compareList.map(() => "1fr").join(" ")}`, gap: 0, background: "rgba(28,25,23,0.4)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden", backdropFilter: "blur(10px)" }}>
-                                {/* Header */}
-                                <div style={{ padding: 24, borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border)", background: "rgba(12,10,9,0.2)" }}>
-                                    <div style={{ fontSize: 11, fontWeight: 800, color: "var(--accent)", letterSpacing: "1px" }}>SPECIFICATIONS</div>
-                                </div>
-                                {compareList.map(tool => (
-                                    <div key={tool.id} style={{ padding: 24, borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border)", textAlign: "center" }}>
-                                        <div style={{ fontSize: 32, marginBottom: 12 }}>{tool.logo}</div>
-                                        <div style={{ fontWeight: 900, color: "#FFF", fontSize: 18, marginBottom: 4, letterSpacing: "-0.5px" }}>{tool.name}</div>
-                                        <div style={{ color: "var(--muted)", fontSize: 12, fontWeight: 600, marginBottom: 12 }}>{tool.company}</div>
-                                        <Badge text={tool.badge} />
-                                    </div>
-                                ))}
-
-                                {/* Rows */}
-                                {[
-                                    { label: "Intelligence Rating", key: "rating", icon: <Star size={14} />, format: (r: any) => <StarRating rating={r} /> },
-                                    { label: "Community Signal", key: "reviews", icon: <Globe size={14} />, format: (r: any) => <span style={{ color: "var(--accent)", fontWeight: 800 }}>{r.toLocaleString()}</span> },
-                                    { label: "Pricing Model", key: "price", icon: <TrendingUp size={14} />, format: (p: any) => <span style={{ ...styles.priceTag(p), fontSize: 11, padding: "2px 8px" }}>{p}</span> },
-                                    { label: "Primary Category", key: "category", icon: <LayoutGrid size={14} />, format: (c: any) => <span style={{ fontWeight: 600 }}>{c}</span> },
-                                    { label: "Core Architecture", key: "model", icon: <Cpu size={14} />, format: (m: any) => <span style={{ fontFamily: "monospace", fontSize: 12, color: "#A78BFA", background: "rgba(167,139,250,0.1)", padding: "2px 6px", borderRadius: 4 }}>{m}</span> },
-                                    { label: "API Availability", key: "api", icon: <Monitor size={14} />, format: (v: any) => v ? <div style={{ color: "#34D399", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", fontWeight: 700 }}><CheckCircle2 size={14} /> ENABLED</div> : <div style={{ color: "var(--muted)", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", fontWeight: 700 }}><XCircle size={14} /> NONE</div> },
-                                    { label: "Open Intelligence", key: "opensource", icon: <ShieldCheck size={14} />, format: (v: any) => v ? <div style={{ color: "#34D399", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", fontWeight: 700 }}><CheckCircle2 size={14} /> YES</div> : <div style={{ color: "var(--muted)", display: "flex", alignItems: "center", gap: 6, justifyContent: "center", fontWeight: 700 }}><XCircle size={14} /> NO</div> },
-                                ].map(row => (
-                                    <Fragment key={row.label}>
-                                        <div style={{ padding: "16px 24px", borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border)", color: "var(--muted)", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 10, background: "rgba(12,10,9,0.1)" }}>
-                                            <span style={{ color: "var(--accent)", opacity: 0.8 }}>{row.icon}</span>
-                                            {row.label}
-                                        </div>
-                                        {compareList.map(tool => (
-                                            <div key={tool.id} style={{ padding: "16px 24px", borderBottom: "1px solid var(--border)", borderRight: "1px solid var(--border)", textAlign: "center", fontSize: 13, color: "var(--foreground)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                {row.format(tool[row.key])}
-                                            </div>
-                                        ))}
-                                    </Fragment>
-                                ))}
-                            </div>
-                            <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
-                                <button style={{ ...styles.compareBtn, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "var(--muted)" }} onClick={() => setCompareList([])}>Clear Matrix</button>
-                                <button style={styles.compareBtn} onClick={() => setActiveNav("discover")}>Add More Units</button>
-                            </div>
-                        </div>
-                    )}
+                    ))}
                 </div>
-            )}
+
+                {/* Load More */}
+                {hasMore && (
+                    <div style={{ marginTop: 40, textAlign: "center" }}>
+                        <button
+                            onClick={() => fetchTools(false)}
+                            disabled={loading}
+                            style={{
+                                ...styles.navBtn,
+                                background: "rgba(59,130,246,0.1)",
+                                border: "1px solid rgba(59,130,246,0.2)",
+                                color: "#60A5FA",
+                                padding: "12px 40px",
+                                opacity: loading ? 0.5 : 1
+                            }}
+                        >
+                            {loading ? "Loading..." : "Load More Tools"}
+                        </button>
+                    </div>
+                )}
+            </div>
 
             {/* COMPARE BAR */}
-            {compareList.length > 0 && activeNav !== "compare" && (
+            {compareList.length > 0 && (
                 <div style={styles.compareBar}>
                     <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -837,7 +574,7 @@ export default function AINexus({ initialTools, initialModels, news, videos, ini
                             ))}
                         </div>
                     </div>
-                    <button style={styles.compareBtn} onClick={() => setActiveNav("compare")}>
+                    <button style={styles.compareBtn} onClick={() => router.push("/compare")}>
                         <span>Launch Analysis</span>
                         <ArrowRight size={16} />
                     </button>

@@ -159,7 +159,7 @@ export default async function PlatformsHub() {
 
     return (
         <div style={styles.page}>
-            <SharedNavbar activeNav="discover" user={user} />
+            <SharedNavbar user={user} />
 
             <main style={styles.container}>
                 <h1 style={styles.header}>Platforms Hub</h1>

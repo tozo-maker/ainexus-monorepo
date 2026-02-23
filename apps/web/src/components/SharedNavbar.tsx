@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
     Search,
     Globe,
@@ -32,26 +32,22 @@ import {
 } from 'lucide-react';
 
 export default function SharedNavbar({
-    activeNav = "discover",
-    setActiveNav,
     user,
     compareListCount = 0
 }: {
-    activeNav?: string;
-    setActiveNav?: (tab: string) => void;
     user?: any;
     compareListCount?: number;
 }) {
     const router = useRouter();
+    const pathname = usePathname();
     const [spatialMode, setSpatialMode] = useState(false);
 
     const navItems = [
-        { id: "discover", label: "Discover", icon: <Search size={14} /> },
-        { id: "categories", label: "Categories", icon: <LayoutGrid size={14} /> },
-        { id: "compare", label: "Compare", icon: <Repeat size={14} /> },
-        { id: "models", label: "Models", icon: <Cpu size={14} /> },
-        { id: "news", label: "News", icon: <Newspaper size={14} /> },
-        { id: "videos", label: "Videos", icon: <Video size={14} /> },
+        { id: "discover", label: "Discover", icon: <Globe size={14} />, href: "/" },
+        { id: "models", label: "Intelligence", icon: <Cpu size={14} />, href: "/platforms" },
+        { id: "news", label: "Newsroom", icon: <Newspaper size={14} />, href: "/news" },
+        { id: "videos", label: "Studio", icon: <Video size={14} />, href: "/videos" },
+        { id: "compare", label: "Compare", icon: <Repeat size={14} />, href: "/compare" },
     ];
 
     const styles = {
@@ -128,25 +124,19 @@ export default function SharedNavbar({
         }
     };
 
-    const handleNavClick = (id: string) => {
-        if (setActiveNav) {
-            setActiveNav(id);
-        } else {
-            router.push("/");
-        }
-    };
+
 
     return (
         <nav style={styles.nav}>
-            <button style={{ ...styles.logo, outline: "none" }} onClick={() => handleNavClick("discover")}>
+            <Link href="/" style={{ ...styles.logo }}>
                 <Diamond size={24} fill="var(--accent)" stroke="var(--accent)" />
                 <span>AI<span style={styles.logoAccent}>Nexus</span></span>
-            </button>
+            </Link>
             {navItems.map(item => (
-                <button
+                <Link
                     key={item.id}
-                    style={styles.navItem(activeNav === item.id)}
-                    onClick={() => handleNavClick(item.id)}
+                    href={item.href}
+                    style={styles.navItem(pathname === item.href)}
                 >
                     {item.icon}
                     {item.label}
@@ -167,7 +157,7 @@ export default function SharedNavbar({
                             {compareListCount}
                         </span>
                     )}
-                </button>
+                </Link>
             ))}
             <div style={styles.navRight}>
                 {user ? (

@@ -142,7 +142,7 @@ export default function IntentSearchPage() {
 
     return (
         <div style={styles.page}>
-            <SharedNavbar activeNav="discover" />
+            <SharedNavbar />
 
             <main style={styles.container}>
                 <div style={styles.hero}>
